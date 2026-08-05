@@ -1,0 +1,22 @@
+# Dependencies and generated application bundles
+node_modules/
+dist/
+outputs/
+
+# Local QA and tool caches
+work/
+.npm-cache/
+coverage/
+
+# Environment and operating-system files
+.env
+.env.*
+!.env.example
+.DS_Store
+*.log
+
+# Editor and temporary files
+.idea/
+.vscode/
+*.swp
+*.swo
