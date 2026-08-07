@@ -1,10 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
-  AppWindow, Archive, Boxes, Check, ChevronDown, ChevronRight, Clock, Cloud, Code2,
-  Command, Ellipsis, FileCode2, FileText, Folder, FolderOpen, Grid2X2, House, Image, Leaf,
-  Lightbulb, List, PencilLine, Play, Plus, Rocket, Search, Settings, Share, Sparkles, Square,
-  Star, Trash2, Upload, Wand2, X,
+  AppWindow, Archive, Boxes, CalendarDays, Check, ChevronDown, ChevronRight, CircleCheck,
+  Clock, Cloud, Code2, Command, Ellipsis, FileCode2, FileText, Folder, FolderOpen, Grid2X2,
+  Hammer, House, Image, Leaf, Lightbulb, List, PencilLine, Play, Plus, Rocket, Search,
+  Settings, Share, Sparkles, Square, Star, Trash2, Upload, Wand2, X,
 } from 'lucide-react'
 import './styles.css'
 
@@ -1271,7 +1271,18 @@ function ProjectsPage({ notes, sessions, runningApps, busyProject, onOpen, onCre
  * Detail
  * ------------------------------------------------------------------ */
 
-const FEATURE_STATUSES = ['Building', 'Planned', 'Idea', 'Done']
+// Each status carries its own icon, so a feature's state is readable from the
+// row without parsing the label. A native <select> cannot draw icons in its
+// options, so the icon sits in the pill for the chosen value and doubles as the
+// row's leading mark.
+const FEATURE_STATUS_ICONS = {
+  Building: Hammer,
+  Planned: CalendarDays,
+  Idea: Lightbulb,
+  Done: CircleCheck,
+}
+
+const FEATURE_STATUSES = Object.keys(FEATURE_STATUS_ICONS)
 
 // Images are only offered where there is room to show them - the Features tab
 // passes the handlers, the sidebar summary does not.
@@ -1282,15 +1293,20 @@ function FeatureList({ features, onChange, onRemove, onAddImages, onRemoveImage 
       {features.map(feature => {
         const done = feature.status === 'Done'
         const images = feature.images || []
+        const tone = feature.status.toLowerCase()
+        const StatusIcon = FEATURE_STATUS_ICONS[feature.status] || Lightbulb
         return (
           <div className={`feature-row ${done ? 'feature-row--done' : ''}`} key={feature.id}>
-            <span className="feature-icon">{done ? <Check size={15} strokeWidth={2.6} /> : <Lightbulb size={16} />}</span>
+            <span className={`feature-icon feature-icon--${tone}`}>
+              <StatusIcon size={15} strokeWidth={2.1} />
+            </span>
             <span className="feature-copy">
               <strong>{feature.title}</strong>
               {feature.description && <small>{feature.description}</small>}
             </span>
-            <label className={`feature-status feature-status--${feature.status.toLowerCase()}`}>
+            <label className={`feature-status feature-status--${tone}`}>
               <span className="visually-hidden">Status for {feature.title}</span>
+              <StatusIcon className="feature-status-icon" size={11} strokeWidth={2.4} aria-hidden="true" />
               <select value={feature.status} onChange={event => onChange(feature.id, event.target.value)}>
                 {FEATURE_STATUSES.map(status => <option key={status}>{status}</option>)}
               </select>
