@@ -468,7 +468,10 @@ async function prepareProjectIcon(file) {
   canvas.width = PROJECT_ICON_SIZE
   canvas.height = PROJECT_ICON_SIZE
   const context = canvas.getContext('2d')
-  const scale = Math.min(PROJECT_ICON_SIZE / image.width, PROJECT_ICON_SIZE / image.height)
+  // Cover, not contain: scale by the larger ratio and centre-crop the overflow,
+  // so the square is always filled. Fitting inside it baked transparent bars
+  // into the stored image, which then showed as pale strips on the card.
+  const scale = Math.max(PROJECT_ICON_SIZE / image.width, PROJECT_ICON_SIZE / image.height)
   const width = image.width * scale
   const height = image.height * scale
   context.drawImage(image, (PROJECT_ICON_SIZE - width) / 2, (PROJECT_ICON_SIZE - height) / 2, width, height)
@@ -1196,7 +1199,6 @@ function ProjectsPage({ notes, sessions, runningApps, busyProject, onOpen, onCre
   const allProjects = notes.filter(note => note.project)
   const projects = allProjects.filter(note => {
     if (!`${note.title} ${note.description}`.toLowerCase().includes(query.toLowerCase())) return false
-    if (filter === 'Linked') return Boolean(note.workspacePath)
     if (filter === 'Running') return Boolean(sessions[note.id])
     return true
   })
@@ -1226,7 +1228,7 @@ function ProjectsPage({ notes, sessions, runningApps, busyProject, onOpen, onCre
         <>
           <div className="content-toolbar">
             <div className="segmented" role="group" aria-label="Filter projects">
-              {['All', 'Linked', 'Running'].map(item => (
+              {['All', 'Running'].map(item => (
                 <button key={item} className={filter === item ? 'is-active' : ''} aria-pressed={filter === item} onClick={() => setFilter(item)}>{item}</button>
               ))}
             </div>

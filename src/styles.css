@@ -1374,7 +1374,9 @@ p { margin-top: 0; }
   background: rgba(0, 0, 0, .2);
 }
 
-.project-icon-preview img { max-width: 100%; max-height: 100%; border-radius: 8px; object-fit: contain; }
+/* Square and cropped, so the preview in the sheet is exactly what the card
+   will show rather than a differently-fitted version of it. */
+.project-icon-preview img { height: 100%; aspect-ratio: 1 / 1; border-radius: 8px; object-fit: cover; }
 
 .project-icon-preview button {
   position: absolute;
