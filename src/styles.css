@@ -978,6 +978,22 @@ p { margin-top: 0; }
  * project layout, and a sidebar just narrows the page you type into. */
 .page--note .detail-header { margin-bottom: 14px; }
 
+/* Writing surface on the left, feature ideas on the right. The editor column
+   keeps minmax(0,...) so a long unbroken line of prose cannot widen it and
+   push the sidebar off the page. */
+.note-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  align-items: start;
+  gap: 14px;
+}
+
+.note-features { padding-bottom: 16px; }
+.note-feature-composer { padding: 0 20px; }
+.note-features .feature-list { padding: 0 6px; }
+.note-features .feature-row { min-height: 50px; padding: 8px 10px; border-radius: 8px; }
+.note-features .feature-row:hover { background: rgba(255, 255, 255, .035); }
+
 .note-title-input {
   width: 100%;
   padding: 0;
@@ -1893,6 +1909,7 @@ p { margin-top: 0; }
   .sidebar { flex-basis: 218px; width: 218px; }
   .home-grid { grid-template-columns: 1fr; grid-template-areas: "start" "command" "recent" "graph"; }
   .detail-grid { grid-template-columns: 1fr; }
+  .note-grid { grid-template-columns: 1fr; }
   .detail-side { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .notes-grid,
   .projects-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }

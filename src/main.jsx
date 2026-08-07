@@ -1418,6 +1418,22 @@ function NoteDetailPage({
 
   const body = detail.body || ''
   const words = wordCount(body)
+  const features = detail.features || []
+
+  // Same shape as a project's features, so converting a note to a project
+  // carries the list across untouched.
+  const updateFeature = (featureId, status) => onUpdateDetail({
+    ...detail,
+    features: features.map(feature => feature.id === featureId ? { ...feature, status } : feature),
+  })
+  const removeFeature = featureId => onUpdateDetail({
+    ...detail,
+    features: features.filter(feature => feature.id !== featureId),
+  })
+  const addFeature = title => onUpdateDetail({
+    ...detail,
+    features: [...features, { id: `f-${Date.now().toString(36)}`, title, description: '', status: 'Idea', images: [] }],
+  })
 
   // A brand new note opens with the cursor already in the title, so New Note
   // puts you straight into writing rather than into a form.
@@ -1491,6 +1507,7 @@ function NoteDetailPage({
         </button>
       </div>
 
+      <div className="note-grid">
       <section className="editor-surface note-editor">
         <div className="editor-tabs" role="tablist" aria-label="Note content">
           {tabs.map((item, index) => (
@@ -1537,6 +1554,19 @@ function NoteDetailPage({
           </div>
         )}
       </section>
+
+        <aside className="detail-side">
+          <Surface className="project-features note-features">
+            <SectionTitle>Feature Ideas</SectionTitle>
+            {features.length === 0
+              ? <p className="empty-copy">Nothing tracked yet. Add the first idea below.</p>
+              : <FeatureList features={features} onChange={updateFeature} onRemove={removeFeature} />}
+            <div className="note-feature-composer">
+              <FeatureComposer onAdd={addFeature} />
+            </div>
+          </Surface>
+        </aside>
+      </div>
     </div>
   )
 }
