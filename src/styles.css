@@ -462,6 +462,10 @@ p { margin-top: 0; }
 .project-glyph--bulb { color: #ffd45b; background: linear-gradient(145deg, #3a3320, #1a1710); }
 .project-glyph--roadmap { color: #91d767; background: linear-gradient(145deg, #26331f, #131a10); }
 .project-glyph--document { color: #cdd0d8; background: linear-gradient(145deg, #2c2f35, #14161a); }
+.project-glyph--book { color: #ffc98a; background: linear-gradient(145deg, #3a2f1f, #1a1510); }
+.project-glyph--design { color: #ff9ecb; background: linear-gradient(145deg, #3d2231, #1d1017); }
+.project-glyph--target { color: #ff8f7a; background: linear-gradient(145deg, #3d2620, #1c1210); }
+.project-glyph--bug { color: #8be0d0; background: linear-gradient(145deg, #1e3833, #101c1a); }
 
 .project-glyph--image { overflow: hidden; background: rgba(255, 255, 255, .06); }
 .project-glyph--image img { width: 100%; height: 100%; object-fit: cover; }
@@ -697,6 +701,22 @@ p { margin-top: 0; }
 .contribution-cell--4 { background: #30d158; }
 .contribution-cell--future { background: transparent; box-shadow: none; }
 
+/* Today gets a lit ring so the current day is findable at a glance, and a soft
+   pulse when nothing has been logged yet - it reads as waiting, not as empty. */
+.contribution-cell--today {
+  box-shadow: 0 0 0 1.5px #0a84ff, 0 0 7px rgba(10, 132, 255, .55);
+}
+
+.contribution-cell--today.contribution-cell--0 {
+  background: rgba(10, 132, 255, .2);
+  animation: today-pulse 2.6s ease-in-out infinite;
+}
+
+@keyframes today-pulse {
+  0%, 100% { box-shadow: 0 0 0 1.5px rgba(10, 132, 255, .85), 0 0 5px rgba(10, 132, 255, .4); }
+  50% { box-shadow: 0 0 0 1.5px #0a84ff, 0 0 10px rgba(10, 132, 255, .75); }
+}
+
 .contribution-footer {
   display: flex;
   align-items: center;
@@ -750,27 +770,48 @@ p { margin-top: 0; }
 
 .content-toolbar .view-toggle { margin-left: auto; }
 
+/* The <select> is stretched to fill the whole field and the icons are floated
+   over it, so clicking anywhere on the control opens the menu. Previously only
+   the text itself was the hit target - the padding and chevron did nothing. */
 .select-field {
+  position: relative;
   display: inline-flex;
   height: 31px;
   align-items: center;
-  gap: 7px;
-  padding: 0 9px;
+  padding: 0;
   border: 1px solid rgba(255, 255, 255, .13);
   border-radius: 7px;
   background: rgba(255, 255, 255, .04);
   color: #dfe0e3;
 }
 
+.select-field:hover { border-color: rgba(255, 255, 255, .24); background: rgba(255, 255, 255, .07); }
+
+.select-field > svg {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.select-field > svg:first-child { left: 10px; }
+.select-field > svg:last-child { right: 9px; }
+
 .select-field select {
-  padding: 0 10px 0 0;
+  width: 100%;
+  height: 100%;
+  padding: 0 27px 0 11px;
   border: 0;
   outline: 0;
   appearance: none;
   background: transparent;
   color: inherit;
+  cursor: pointer;
   font-size: 13px;
 }
+
+/* Only leave room for a leading icon when there actually is one. */
+.select-field:has(> svg:first-child) select { padding-left: 33px; }
 
 .view-toggle {
   display: flex;
@@ -796,9 +837,9 @@ p { margin-top: 0; }
 .note-card {
   position: relative;
   display: flex;
-  min-height: 152px;
+  min-height: 112px;
   flex-direction: column;
-  padding: 17px;
+  padding: 13px 14px;
   border: 1px solid rgba(255, 255, 255, .095);
   border-radius: 11px;
   background: rgba(255, 255, 255, .025);
@@ -820,23 +861,23 @@ p { margin-top: 0; }
   text-align: left;
 }
 
-.note-copy { display: grid; min-width: 0; flex: 1; gap: 7px; padding-right: 58px; }
+.note-copy { display: grid; min-width: 0; flex: 1; gap: 4px; padding-right: 56px; align-content: start; }
 .note-copy strong { overflow: hidden; color: #f2f2f4; font-size: 15px; font-weight: 560; letter-spacing: -.25px; text-overflow: ellipsis; white-space: nowrap; }
 
 .note-copy small {
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   color: #acaeb5;
   font-size: 13px;
   line-height: 1.4;
 }
 
 .note-copy--empty { color: #7e818a; font-style: italic; }
-.note-copy em { margin-top: auto; color: #8f929a; font-size: 11px; font-style: normal; }
+.note-copy em { margin-top: auto; padding-top: 6px; color: #8f929a; font-size: 11px; font-style: normal; }
 
-.note-card-meta { position: absolute; top: 15px; right: 42px; display: flex; align-items: center; gap: 6px; }
+.note-card-meta { position: absolute; top: 13px; right: 38px; display: flex; align-items: center; gap: 6px; }
 .note-card .tag { color: #afb2b9; font-size: 11px; }
 .note-star { color: #ffcf55; }
 

@@ -1,10 +1,11 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
-  AppWindow, Archive, Boxes, CalendarDays, Check, ChevronDown, ChevronRight, CircleCheck,
-  Clock, Cloud, Code2, Command, Ellipsis, FileCode2, FileText, Folder, FolderOpen, Grid2X2,
-  Hammer, House, Image, Leaf, Lightbulb, List, PencilLine, Play, Plus, Rocket, Search,
-  Settings, Share, Sparkles, Square, Star, Trash2, Upload, Wand2, X,
+  AppWindow, Archive, BookOpen, Boxes, Bug, CalendarDays, Check, ChevronDown, ChevronRight,
+  CircleCheck, Clock, Cloud, Code2, Command, Ellipsis, FileCode2, FileText, Folder, FolderOpen,
+  Grid2X2, Hammer, House, Image, Leaf, Lightbulb, List, Map as MapIcon, Package, PenTool,
+  PencilLine, Play, Plus, Rocket, Search, Settings, Share, Sparkles, Square, Star, Target,
+  Trash2, Upload, Wand2, X,
 } from 'lucide-react'
 import './styles.css'
 
@@ -29,20 +30,30 @@ const DEFAULT_SETTINGS = { notifications: true, reducedMotion: false, stopQuitsA
 
 const TAGS = ['Tech', 'SaaS', 'Design', 'Mobile', 'API', 'Docs', 'Ideas']
 
+/*
+ * The picker set. Sparkles and the magic wand are gone - they read as the
+ * generic "AI" mark rather than as anything about the note - replaced by icons
+ * that say what the note is: a map for a roadmap, a pen nib for design work.
+ */
 const GLYPHS = [
-  { id: 'code', label: 'Code', icon: Code2 },
-  { id: 'cloud', label: 'Cloud', icon: Cloud },
-  { id: 'leaf', label: 'Nature', icon: Leaf },
-  { id: 'cube', label: 'Package', icon: Boxes },
-  { id: 'brand', label: 'Brand', icon: Sparkles },
-  { id: 'bulb', label: 'Idea', icon: Lightbulb },
-  { id: 'roadmap', label: 'Roadmap', icon: Wand2 },
   { id: 'document', label: 'Document', icon: FileText },
+  { id: 'code', label: 'Code', icon: FileCode2 },
+  { id: 'book', label: 'Reference', icon: BookOpen },
+  { id: 'bulb', label: 'Idea', icon: Lightbulb },
+  { id: 'roadmap', label: 'Roadmap', icon: MapIcon },
+  { id: 'design', label: 'Design', icon: PenTool },
+  { id: 'target', label: 'Goal', icon: Target },
+  { id: 'bug', label: 'Bug', icon: Bug },
+  { id: 'cube', label: 'Package', icon: Package },
+  { id: 'cloud', label: 'Cloud', icon: Cloud },
 ]
 
+// Retired ids stay mapped so notes created with them keep their icon.
 const GLYPH_ICONS = {
-  code: FileCode2, cloud: Cloud, leaf: Leaf, cube: Boxes, brand: Sparkles,
-  bulb: Lightbulb, roadmap: Wand2, document: FileText, archive: Archive,
+  document: FileText, code: FileCode2, book: BookOpen, bulb: Lightbulb,
+  roadmap: MapIcon, design: PenTool, target: Target, bug: Bug,
+  cube: Package, cloud: Cloud,
+  leaf: Leaf, brand: PenTool, archive: Archive,
 }
 
 const PAGE_LABELS = { home: 'Home', notes: 'Notes', projects: 'Projects', settings: 'Settings', detail: 'Project' }
@@ -196,6 +207,7 @@ function buildCalendar(totals, weeks, now) {
         date: new Date(cursor),
         minutes: totals.get(key) || 0,
         future: cursor.getTime() > today.getTime(),
+        today: cursor.getTime() === today.getTime(),
       })
       cursor.setDate(cursor.getDate() + 1)
     }
@@ -819,8 +831,8 @@ function ContributionGraph({ focusLog, sessions }) {
                 {week.map(day => (
                   <span
                     key={day.key}
-                    className={`contribution-cell contribution-cell--${day.future ? 'future' : focusLevel(day.minutes)}`}
-                    title={day.future ? undefined : `${day.minutes >= 1 ? formatDuration(day.minutes) : 'No focus time'} on ${day.date.toLocaleDateString(undefined, { month: 'long', day: 'numeric' })}`}
+                    className={`contribution-cell contribution-cell--${day.future ? 'future' : focusLevel(day.minutes)} ${day.today ? 'contribution-cell--today' : ''}`}
+                    title={day.future ? undefined : `${day.minutes >= 1 ? formatDuration(day.minutes) : 'No focus time'} on ${day.today ? 'today' : day.date.toLocaleDateString(undefined, { month: 'long', day: 'numeric' })}`}
                   />
                 ))}
               </div>
